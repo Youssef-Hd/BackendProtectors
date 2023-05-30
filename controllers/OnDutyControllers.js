@@ -1,16 +1,33 @@
 import asyncHandler from "express-async-handler";
-import onduty from "../models/OnDutyModel.js";
+// import onduty from "../models/OnDutyModel.js";
+import Posts from "../models/OnDutyModel.js";
+import Comment from "../models/commentModel.js";
+
+const getAllPosts = async (req, res) => {
+  try {
+    const allPosts = await Posts.find({})
+    res.status(200).json({
+      message: "Getting all posts",
+      status: 200,
+      data: allPosts,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to fetch posts",
+    });
+  }
+};
 
 //getting all OnDuty
-const getAllOnDuty = asyncHandler(async (req, res) => {
-  const all_OnDuty = await onduty.find();
+// const getAllOnDuty = asyncHandler(async (req, res) => {
+//   const all_OnDuty = await onduty.find();
 
-  res.status(200).json({
-    message: "getting all OnDuty",
-    status: 200,
-    data: all_OnDuty,
-  });
-});
+//   res.status(200).json({
+//     message: "getting all OnDuty",
+//     status: 200,
+//     data: all_OnDuty,
+//   });
+// });
 
 //get on Duty
 const getOnDuty = asyncHandler(async (req, res) => {
@@ -26,11 +43,14 @@ const getOnDuty = asyncHandler(async (req, res) => {
   });
 });
 
+// 
+
 const postOnDuty = asyncHandler(async (req, res) => {
   const { location, description } = req.body;
   const image = req.files.image;
-  const basePath = `${req.protocol}://${req.get("host")}/images`;
-  const fileName = image[0].filename;
+  // const basePath = `${req.protocol}://${req.get("host")}/images`;
+  // const fileName = image[0].filename;
+
 
   if (!location || !description) {
     return res.status(400).send({ error: "Please fill all fields" });
@@ -38,7 +58,7 @@ const postOnDuty = asyncHandler(async (req, res) => {
 
   // console.log("Post", postPage);
 
-  const ondutyy = await onduty.create({
+  const ondutyy = await Posts.create({
     location: location,
     description: description,
     image: `${basePath}/${fileName}`,
@@ -55,7 +75,7 @@ const postOnDuty = asyncHandler(async (req, res) => {
 const updateOnDuty = asyncHandler(async (req, res) => {
   const pageId = req.params.id;
   const update = await onduty.findById(pageId);
-  const image = req.body
+  const image = req.body;
 
   if (!update) {
     return res.status(400).json({ error: "unable to find id" });
@@ -93,6 +113,8 @@ export default {
   eraseOnDuty,
   updateOnDuty,
   postOnDuty,
-  getAllOnDuty,
+  // getAllOnDuty,
+  // getOnDuty,
   getOnDuty,
+  getAllPosts,
 };

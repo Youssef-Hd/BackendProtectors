@@ -1,26 +1,30 @@
 import express from "express";
 import dotenv from "dotenv";
+import morgan from "morgan";
 import db from "./config/db.js";
 import UserRoute from "./routes/userRoutes.js";
 import CategoryRoute from "./routes/categoryRoutes.js";
 import ngoRoutes from "./routes/ngoRoutes.js";
 import pageRoutes from "./routes/pageRoutes.js";
-import OnDutyRoutes from './routes/OnDutyRoutes.js'
-import LocationRoutes from './routes/locationRoutes.js'
-import MapRoutes from './routes/mapImageRoutes.js'
+import OnDutyRoutes from "./routes/OnDutyRoutes.js";
+import LocationRoutes from "./routes/locationRoutes.js";
+import MapRoutes from "./routes/mapImageRoutes.js";
+import replyRoutes from './routes/replyRoutes.js'
+import commentsRoutes from "./routes/commentsRoutes.js";
 import cors from "cors";
 
 dotenv.config();
 await db();
 const app = new express();
-app.use(cors()); 
+app.use(cors());
+app.use(morgan("common"));
 
 const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public"));
-app.use('/images', express.static('images'));
+app.use("/images", express.static("images"));
 
 app.use("/api/user", UserRoute);
 app.use("/api/category", CategoryRoute);
@@ -32,7 +36,8 @@ app.use("/api/page/:id", pageRoutes);
 app.use("/api/onduty", OnDutyRoutes);
 app.use("/api/location", LocationRoutes);
 app.use("/api/mapImage", MapRoutes);
+app.use("/api/comment", commentsRoutes);
+app.use("/api/reply", replyRoutes);
 app.use("/api/onduty/:id", OnDutyRoutes);
-
 
 app.listen(port, () => console.log(`API IS RUNING ON PORT: ${port}`));

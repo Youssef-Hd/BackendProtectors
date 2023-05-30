@@ -1,12 +1,10 @@
-import User from '../models/userModel.js';
+import User from "../models/userModel.js";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 import asyncHandler from "express-async-handler";
-
 
 //getting all Users
 const getAllUsers = asyncHandler(async (req, res) => {
-
   const all_Users = await User.find();
 
   res.status(200).json({
@@ -18,18 +16,17 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 //register a user
 const register = async (req, res) => {
-
   // console.log(req.body);
 
   try {
     // Get user input
-    const { name, email, password, phoneNumber, role } = req.body;
+    const { name, email, password, phoneNumber } = req.body;
 
     // Validate user input
-    if (!(email && password && name && phoneNumber && role)) {  // if(!name || !email || !password){
+    if (!(email && password && name && phoneNumber)) {
+      // if(!name || !email || !password){
       res.status(400).send("All input is required");
     }
-
 
     // check if user already exist
     // Validate if user exist in our database
@@ -39,7 +36,6 @@ const register = async (req, res) => {
       return res.status(409).send("User Already Exist. Please Login");
     }
 
-
     //Encrypt user password
     var encryptedPassword = await bcrypt.hash(password, 10);
 
@@ -48,6 +44,8 @@ const register = async (req, res) => {
       name,
       email: email.toLowerCase(), // sanitize: convert email to lowercase
       password: encryptedPassword,
+      phoneNumber,
+      
     });
 
     // Create token
@@ -66,8 +64,8 @@ const register = async (req, res) => {
       email,
       phoneNumber,
       token,
-      _id: user._id
-    }
+      _id: user._id,
+    };
 
     // return new user
     res.status(201).json(user_object);
@@ -75,7 +73,7 @@ const register = async (req, res) => {
     console.log(err);
   }
   // Our register logic ends here
-}
+};
 
 const login = async (req, res) => {
   try {
@@ -84,7 +82,7 @@ const login = async (req, res) => {
 
     // Validate user input
     if (!(email && password)) {
-      res.status(400).send("All input is required");
+      return res.status(400).send("All input is required");
     }
     // Validate if user exist in our database
     const user = await User.findOne({ email });
@@ -105,19 +103,19 @@ const login = async (req, res) => {
       const user_object = {
         email,
         token,
-        _id: user._id
-      }
+        _id: user._id,
+        role: user.role,
+      };
 
       // user
-      res.status(200).json(user_object);
+      return res.status(200).json(user_object);
     }
-    res.status(400).send("Invalid Credentials");
+    return res.status(400).send("Invalid Credentials");
   } catch (err) {
     console.log(err);
+    return res.status(500).send("An error occurred");
   }
-  // Our register logic ends here
-}
-
+};
 
 const deleteUser = asyncHandler(async (req, res) => {
   try {
@@ -156,6 +154,4 @@ export default {
   deleteUser,
   logoutUser,
   getMe,
-
-
-}
+};

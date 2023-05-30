@@ -12,4 +12,6 @@ router.route("/getuser/:id").get(verifyToken, UserController.getMe);
 router.route("/deleteUser/:id").get(verifyToken, UserController.deleteUser);
 
 
+
+
 export default router;

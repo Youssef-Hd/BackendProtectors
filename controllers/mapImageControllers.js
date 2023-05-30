@@ -1,6 +1,8 @@
 import asyncHandler from "express-async-handler";
 import cloudinary from "../middlewares/Cloudinary.js";
 import mapImage from "../models/mapImage.js";
+
+
 // API endpoint for saving location and photo as map data
 const postmapImage = async (req, res, next) => {
   try {

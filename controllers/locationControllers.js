@@ -2,34 +2,42 @@ import asyncHandler from "express-async-handler";
 import Location from "../models/locationModel.js";
 import cloudinary from "../middlewares/Cloudinary.js";
 
+
+
+
+
+
+
+
+
+
 // API endpoint for saving location and photo as map data
 const postLocation = async (req, res, next) => {
-  const { latitude, longitude, location  } = req.body;
+  const { latitude, longitude, location, description, mapImage,user } = req.body;
 
   try {
-    let photo = req.file.path;
-    const onePhoto = await cloudinary.uploader.upload(photo); // upload the image to cloudinary
-
-   
-
     let images = [];
 
     if (req.files && req.files.length > 0) {
       for (let i = 0; i < req.files.length; i++) {
-        const uploadedImage = await cloudinary.uploader.upload(req.files[i].path);
+        const uploadedImage = await cloudinary.uploader.upload(
+          req.files[i].path
+        );
         images.push({
           public_id: uploadedImage.public_id,
           url: uploadedImage.secure_url,
         });
-      }}
+      }
+    }
     // Create a new Location document
     const locations = new Location({
       latitude,
       longitude,
       location,
-      photo: onePhoto.secure_url,
+      description,
+      mapImage,
       images: images,
-      // images: uploadedImages,
+      user:user,
     });
 
     // Save the location to the database
@@ -46,16 +54,51 @@ const postLocation = async (req, res, next) => {
 };
 
 // API endpoint for retrieving all map data
+// const getLocations = asyncHandler(async (req, res) => {
+//   const Locations = await Location.find().populate("mapImage");
+
+//   res.status(200).json({
+//     message: "getting all Locations",
+//     status: 200,
+//     data: Locations,
+//   });
+// });
+
+
 const getLocations = asyncHandler(async (req, res) => {
-  const Locations = await Location.find();
+  const Locations = await Location.find()
+    .populate('mapImage').populate('user')
 
   res.status(200).json({
-    message: "getting all Ngo's",
+    message: "Getting all Locations",
     status: 200,
     data: Locations,
   });
 });
+
+
+
+
+
+
+
+
+const getLocation = asyncHandler(async (req, res) => {
+  const get_location = await Location.findById(req.params.id);
+  if (!get_location) {
+    return res.status(400).send({ error: "Unable to find ID" });
+  }
+
+  res.status(200).json({
+    message: "getting a specific location",
+    status: 200,
+    data: get_location,
+  });
+});
+
+
 export default {
   postLocation,
   getLocations,
+  getLocation,
 };

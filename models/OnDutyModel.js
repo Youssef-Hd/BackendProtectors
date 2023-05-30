@@ -1,22 +1,33 @@
-import { Schema } from 'mongoose';
-import mongoose from 'mongoose';
+import { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const OnDutySchema = new Schema ({
+const postsSchema = new Schema({
   description: {
     type: String,
-    required: true
+    required: true,
   },
   location: {
     type: String,
-    required: true
+    // required: true,
   },
   image: {
     type: String,
     default: "",
   },
   images: [{ type: String }],
+  
+  // user: {
+  //   type: Schema.Types.ObjectId,
+  //   ref: "User",
+  // },
+  comments: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+
+  ],
 });
 
-
-const onduty = mongoose.model("OnDuty", OnDutySchema);
-export default onduty;
+const Posts = mongoose.model("posts", postsSchema);
+export default Posts;
