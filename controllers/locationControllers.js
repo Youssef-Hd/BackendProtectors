@@ -5,12 +5,6 @@ import cloudinary from "../middlewares/Cloudinary.js";
 
 
 
-
-
-
-
-
-
 // API endpoint for saving location and photo as map data
 const postLocation = async (req, res, next) => {
   const { latitude, longitude, location, description, mapImage,user } = req.body;

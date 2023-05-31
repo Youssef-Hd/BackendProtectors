@@ -6,7 +6,7 @@ const getCommentsByPostId = async (req, res) => {
   try {
     const postId = req.params.postId;
 
-    const comments = await Comment.find({ post: postId });
+    const comments = await Comment.find({ post: postId }).populate('user');
     res.json(comments);
   } catch (error) {
     console.log(error);
@@ -16,12 +16,13 @@ const getCommentsByPostId = async (req, res) => {
 
 const postComment = async (req, res, next) => {
   try {
-    const { postId, content } = req.body;
+    const { postId, content, user} = req.body;
 
     // Create the comment
     const comment = await Comment.create({
       content,
       post: postId,
+      user: user,
     });
 
     const post = await Post.findById(postId);

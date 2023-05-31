@@ -45,6 +45,8 @@ const locationSchema = new Schema({
       ref: "Comment",
     },
   ],
+  replies: [{ type: Schema.Types.ObjectId, ref: "Reply" }],
+  
 });
 
 const Location = mongoose.model("Location", locationSchema);

@@ -2,7 +2,7 @@ import { Schema } from "mongoose";
 import mongoose from "mongoose";
 
 const replySchema = new Schema({
-    content: {
+  content: {
     type: String,
     // required: true,
   },
@@ -10,8 +10,13 @@ const replySchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Comment",
   },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
+
 });
-   
+
 // module.exports = mongoose.model("Reply", replySchema);
 const Reply = mongoose.model("Reply", replySchema);
 export default Reply;
